@@ -14,7 +14,45 @@ struct bilionarios{
 	int idade;
 	string sexo;
 };
+
+
+int particionamento(bilionarios* bilionario, int c, int f) {
+
+	string pivo = bilionario[c].nome;
+	int i = c+1, j = f;
+	while (i <= j) {
+	   if (bilionario[i].nome <= pivo) i++;
+	   else if (pivo <= bilionario[j].nome) j--; 
+	   else { 
+		   swap (bilionario[i].nome,bilionario[j].nome);
+		   swap (bilionario[i].fortuna,bilionario[j].fortuna);
+		   swap	(bilionario[i].fonte,bilionario[j].fonte);
+		   swap (bilionario[i].pais,bilionario[j].pais);
+		   swap (bilionario[i].idade,bilionario[j].idade);
+		   swap (bilionario[i].sexo,bilionario[j].sexo);
+		   i++;
+		   j--;
+	   }
+	}                 
+	bilionario[c].nome = bilionario[j].nome;
+	bilionario[j].nome = pivo;
 	
+	return j;
+
+}
+   
+void quickSort (bilionarios *bilionario, int posPivo, int fim) {
+
+   int posNovoPivo;         
+   if (posPivo < fim) {  
+      posNovoPivo = particionamento(bilionario, posPivo, fim);
+      quickSort(bilionario, posPivo, posNovoPivo- 1); 
+      quickSort(bilionario, posNovoPivo + 1, fim); 
+   }
+}
+
+
+
 void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
     ofstream arquivo("saida.bin", ios::binary); 
 
@@ -241,9 +279,10 @@ int main(){
 	
 	cout << "Opcoes disponiveis:" << endl <<
 	"1 - Fazer uma busca" << endl <<
-	"2 - Inserir um novo elemento" << endl << endl;
-	
+	"2 - Inserir um novo elemento" << endl <<
+	"3 - Ordenar o vetor em ordem alfabetica (crescente)" << endl << endl;
 	int entrada;
+
 	cout << "Digite um valor: ";
 	cin >> entrada;
 	
@@ -262,6 +301,15 @@ int main(){
 			leituraArqBinario(bilionario, numRegistros);
 			break;
 		
+		case 3: 
+			limparTela();
+			cout << "Aqui está seu vetor ordenado em ordem alfabetica!" << endl << endl;
+			quickSort(bilionario, particionamento(bilionario, 0, numRegistros-1), numRegistros-1);
+			escritaArqBinario(bilionario, numRegistros);
+			leituraArqBinario(bilionario, numRegistros);
+			escritaArqCsv(bilionario, numRegistros);
+			
+			break;
 			
 		default:
             cout << "Opcao invalida" << endl;
