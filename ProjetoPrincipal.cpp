@@ -16,6 +16,32 @@ struct bilionarios{
 };
 
 
+int particionamentoDecrescente(bilionarios* bilionario, int c, int f) {
+
+	string pivo = bilionario[c].nome;
+	int i = c+1, j = f;
+	while (i <= j) {
+	   if (bilionario[i].nome >= pivo) i++;
+	   else if (pivo >= bilionario[j].nome) j--; 
+	   else { 
+		   swap (bilionario[i].nome,bilionario[j].nome);
+		   swap (bilionario[i].fortuna,bilionario[j].fortuna);
+		   swap	(bilionario[i].fonte,bilionario[j].fonte);
+		   swap (bilionario[i].pais,bilionario[j].pais);
+		   swap (bilionario[i].idade,bilionario[j].idade);
+		   swap (bilionario[i].sexo,bilionario[j].sexo);
+		   i++;
+		   j--;
+	   }
+	}                 
+	bilionario[c].nome = bilionario[j].nome;
+	bilionario[j].nome = pivo;
+	
+	return j;
+
+}
+
+
 int particionamento(bilionarios* bilionario, int c, int f) {
 
 	string pivo = bilionario[c].nome;
@@ -51,6 +77,16 @@ void quickSort (bilionarios *bilionario, int posPivo, int fim) {
    }
 }
 
+
+void quickSortDecrescente (bilionarios *bilionario, int posPivo, int fim) {
+
+   int posNovoPivo;         
+   if (posPivo < fim) {  
+      posNovoPivo = particionamentoDecrescente(bilionario, posPivo, fim);
+      quickSortDecrescente(bilionario, posPivo, posNovoPivo- 1); 
+      quickSortDecrescente(bilionario, posNovoPivo + 1, fim); 
+   }
+}
 
 
 void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
@@ -280,8 +316,8 @@ int main(){
 	cout << "Opcoes disponiveis:" << endl <<
 	"1 - Fazer uma busca" << endl <<
 	"2 - Inserir um novo elemento" << endl <<
-	"3 - Ordenar o vetor em ordem alfabetica (crescente)" << endl << endl;
-	int entrada;
+	"3 - Ordenar o vetor em ordem alfabetica" << endl << endl;
+	int entrada, entrada1, num;
 
 	cout << "Digite um valor: ";
 	cin >> entrada;
@@ -303,16 +339,35 @@ int main(){
 		
 		case 3: 
 			limparTela();
-			cout << "Aqui está seu vetor ordenado em ordem alfabetica!" << endl << endl;
-			quickSort(bilionario, particionamento(bilionario, 0, numRegistros-1), numRegistros-1);
-			escritaArqBinario(bilionario, numRegistros);
-			leituraArqBinario(bilionario, numRegistros);
-			escritaArqCsv(bilionario, numRegistros);
-			
+			cout << "Voce deseja ordenar por ordem crescente ou decrescente?" << endl;
+			cout << "1 - Crescente";
+			cout << endl << "2 - Decrescente" << endl << endl <<"Digite um valor: ";
+			cin >> entrada1;
+			switch (entrada1) { 
+				case 1:
+					cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
+					particionamento(bilionario, 0, numRegistros-1);
+					num = particionamento(bilionario, 0, numRegistros-1);
+					quickSort(bilionario, num, numRegistros-1);
+					escritaArqBinario(bilionario, numRegistros);
+					leituraArqBinario(bilionario, numRegistros);
+					
+				break;
+				
+				case 2:
+					cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
+					particionamentoDecrescente(bilionario, 0, numRegistros-1);
+					num = particionamentoDecrescente(bilionario, 0,numRegistros-1);
+					quickSortDecrescente(bilionario, 0, numRegistros-1);
+					escritaArqBinario(bilionario, numRegistros);
+					leituraArqBinario(bilionario, numRegistros);
+					
+			}
 			break;
 			
+			
 		default:
-            cout << "Opcao invalida" << endl;
+            cout << "Opcao invalida" << endl << endl;
 		
 	}
 	
