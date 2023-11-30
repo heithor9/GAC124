@@ -89,6 +89,9 @@ void quickSortDecrescente (bilionarios *bilionario, int posPivo, int fim) {
 }
 
 
+
+
+
 void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
     ofstream arquivo("saida.bin", ios::binary); 
 
@@ -100,9 +103,25 @@ void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
 }
 
 
+/*
+void buscaDirecionada (bilionarios* bilionario, int tam, int inicio, int fim) {
+		
+	string aux;
+	ifstream arquivo ("saida.bin", ios::in);
+	arquivo.seek(inicio);
+	
+	while (arquivo.tellg	)
+	{
+		_
+	}
+	
+}
+*/
+
+
 
 void leituraArqBinario (bilionarios* bilionario, int tamanho) {
-	ifstream arquivo("saida.bin");
+	ifstream arquivo("saida.bin", ios::in);
 	arquivo.read((char*) bilionario, sizeof(bilionarios)*tamanho);
 	arquivo.close();
 	
@@ -196,20 +215,20 @@ void insercaoVetor (bilionarios* &bilionario, int& numRegistros, ifstream& arqui
 }
 
 
+
 void buscaVetor (bilionarios* bilionario, int numRegistros) {
 	string nomeBuscado;
 	string sexoBuscado;
 	int entrada;
 	cout << "Escolha um dos filtros da busca" << endl <<
-	"1 - Nome" << endl <<
-	"2 - Sexo" << endl << endl;
+	"[1] - Nome" << endl <<
+	"[2] - Sexo" << endl << endl;
 	cout << "Digite um valor: ";
 	cin >> entrada;
 	bool teste = true;
 	string nomeBilionario;
 	string sexoBilionario;
 	int i = 0;
-
 	switch (entrada) {
 		case 1:
 			cin.ignore();
@@ -250,7 +269,7 @@ void buscaVetor (bilionarios* bilionario, int numRegistros) {
 			cin >> sexoBuscado;
 			cout << endl;
 			transform(sexoBuscado.begin(), sexoBuscado.end(), sexoBuscado.begin(), ::tolower);
-			cout << "Esses sao os bilionario do sexo " << sexoBuscado << " que fazem parte do ranking"<< endl;
+			
 			
 			while (i < numRegistros)
 			{
@@ -267,11 +286,13 @@ void buscaVetor (bilionarios* bilionario, int numRegistros) {
 					<< "Fonte de sua fortuna: " << bilionario[i].fonte << endl
 					<< "Pais de origem: " << bilionario[i].pais << endl
 					<< "Idade: " << bilionario[i].idade << " anos" << endl
-					<< "Sexo: " << bilionario[i].sexo << endl << endl;
+					<< "Sexo: " << bilionario[i].sexo << endl <<
+					"=======================" << endl;
 				}
 				
 				i++;
 			}
+			cout << endl <<  "Esses sao os bilionario do sexo " << sexoBuscado << " que fazem parte do ranking!" << endl << endl << endl;
 			break;
 		
 		default:
@@ -313,62 +334,80 @@ int main(){
 	escritaArqBinario(bilionario, numRegistros);
 	leituraArqBinario(bilionario, numRegistros);
 	
-	cout << "Opcoes disponiveis:" << endl <<
-	"1 - Fazer uma busca" << endl <<
-	"2 - Inserir um novo elemento" << endl <<
-	"3 - Ordenar o vetor em ordem alfabetica" << endl << endl;
-	int entrada, entrada1, num;
 
-	cout << "Digite um valor: ";
-	cin >> entrada;
+	int entrada, entrada1, num;
+	string nomeProcurado;
+	bool teste1 = true;
 	
-	switch (entrada) {
+	
+	while(teste1) {
+		cout << "Opcoes disponiveis:" << endl <<
+		"[1] - Fazer uma busca" << endl <<
+		"[2] - Inserir um novo elemento" << endl <<
+		"[3] - Ordenar o vetor em ordem alfabetica" << endl <<
+		"[4] - Fazer uma busca direcionada" << endl << 
+		"[-1] - Sair" << endl << endl;
+		cout << "Digite um valor: ";
+		cin >> entrada;
+		
+		switch (entrada) {
+
+			case 1:
+				limparTela();
+				buscaVetor(bilionario, numRegistros);
+				break;
 			
-		case 1:
-			limparTela();
-			buscaVetor(bilionario, numRegistros);
-	
-			break;
-		
-		case 2:
-			limparTela();
-			insercaoVetor(bilionario, numRegistros, arquivo_csv);
-			escritaArqBinario(bilionario, numRegistros);
-			leituraArqBinario(bilionario, numRegistros);
-			break;
-		
-		case 3: 
-			limparTela();
-			cout << "Voce deseja ordenar por ordem crescente ou decrescente?" << endl;
-			cout << "1 - Crescente";
-			cout << endl << "2 - Decrescente" << endl << endl <<"Digite um valor: ";
-			cin >> entrada1;
-			switch (entrada1) { 
-				case 1:
-					cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
-					particionamento(bilionario, 0, numRegistros-1);
-					num = particionamento(bilionario, 0, numRegistros-1);
-					quickSort(bilionario, num, numRegistros-1);
-					escritaArqBinario(bilionario, numRegistros);
-					leituraArqBinario(bilionario, numRegistros);
+			case 2:
+				limparTela();
+				insercaoVetor(bilionario, numRegistros, arquivo_csv);
+				escritaArqBinario(bilionario, numRegistros);
+				leituraArqBinario(bilionario, numRegistros);
+				break;
+			
+			case 3: 
+				limparTela();
+				cout << "Voce deseja ordenar por ordem crescente ou decrescente?" << endl;
+				cout << "[1] - Crescente";
+				cout << endl << "[2] - Decrescente" << endl << endl <<"Digite um valor: ";
+				cin >> entrada1;
+				
+				switch (entrada1) { 
+					case 1:
+						
+						particionamento(bilionario, 0, numRegistros-1);
+						num = particionamento(bilionario, 0, numRegistros-1);
+						quickSort(bilionario, num, numRegistros-1);
+						escritaArqBinario(bilionario, numRegistros);
+						leituraArqBinario(bilionario, numRegistros);
+						cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
+						
+					break;
 					
+					case 2:
+						
+						particionamentoDecrescente(bilionario, 0, numRegistros-1);
+						quickSortDecrescente(bilionario, 0, numRegistros-1);
+						escritaArqBinario(bilionario, numRegistros);
+						leituraArqBinario(bilionario, numRegistros);
+						cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
+						
+				}
+				
 				break;
 				
-				case 2:
-					cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
-					particionamentoDecrescente(bilionario, 0, numRegistros-1);
-					num = particionamentoDecrescente(bilionario, 0,numRegistros-1);
-					quickSortDecrescente(bilionario, 0, numRegistros-1);
-					escritaArqBinario(bilionario, numRegistros);
-					leituraArqBinario(bilionario, numRegistros);
-					
-			}
-			break;
-			
-			
-		default:
-            cout << "Opcao invalida" << endl << endl;
-		
+			case 4:
+				cin >> nomeProcurado;
+				//buscaDirecionada(bilionario, numRegistros, nomeProcurado);
+				break;
+				
+				
+			case -1:
+				teste1 = false;
+				break;
+				
+			default:
+				cout << endl << endl << "Opcao invalida" << endl << endl;
+		}
 	}
 	
 	} 
