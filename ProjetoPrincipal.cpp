@@ -194,7 +194,6 @@ void insercaoVetor (bilionarios* &bilionario, int& numRegistros, ifstream& arqui
     cin.ignore();
     getline(cin,aumento[numRegistros].fonte);
     cout << "Pais de origem: ";
-    cin.ignore();
     getline(cin, aumento[numRegistros].pais);
     cout << "Idade: ";
     cin >> aumento[numRegistros].idade;
@@ -211,7 +210,7 @@ void insercaoVetor (bilionarios* &bilionario, int& numRegistros, ifstream& arqui
     bilionario = aumento; 
     numRegistros++; 
     escritaArqCsv(bilionario, numRegistros);
-    cout << endl << "Cadastro concluido com sucesso!";
+    cout << endl << "Cadastro concluido com sucesso!" << endl << endl;
 }
 
 
@@ -402,6 +401,7 @@ int main(){
 				
 				
 			case -1:
+				cout << endl << endl << "Programa finalizado. Volte sempre!" << endl;
 				teste1 = false;
 				break;
 				
