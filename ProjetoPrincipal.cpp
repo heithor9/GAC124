@@ -19,23 +19,19 @@ struct bilionarios{
 int particionamentoDecrescente(bilionarios* bilionario, int c, int f) {
 
 	string pivo = bilionario[c].nome;
+	bilionarios pivoPrincipal = bilionario[c];
 	int i = c+1, j = f;
 	while (i <= j) {
 	   if (bilionario[i].nome >= pivo) i++;
 	   else if (pivo >= bilionario[j].nome) j--; 
 	   else { 
-		   swap (bilionario[i].nome,bilionario[j].nome);
-		   swap (bilionario[i].fortuna,bilionario[j].fortuna);
-		   swap	(bilionario[i].fonte,bilionario[j].fonte);
-		   swap (bilionario[i].pais,bilionario[j].pais);
-		   swap (bilionario[i].idade,bilionario[j].idade);
-		   swap (bilionario[i].sexo,bilionario[j].sexo);
+		   swap (bilionario[i],bilionario[j]);
 		   i++;
 		   j--;
 	   }
 	}                 
-	bilionario[c].nome = bilionario[j].nome;
-	bilionario[j].nome = pivo;
+	bilionario[c] = bilionario[j];
+	bilionario[j] = pivoPrincipal;
 	
 	return j;
 
@@ -45,23 +41,19 @@ int particionamentoDecrescente(bilionarios* bilionario, int c, int f) {
 int particionamento(bilionarios* bilionario, int c, int f) {
 
 	string pivo = bilionario[c].nome;
+	bilionarios pivoPrincipal = bilionario[c];
 	int i = c+1, j = f;
 	while (i <= j) {
 	   if (bilionario[i].nome <= pivo) i++;
 	   else if (pivo <= bilionario[j].nome) j--; 
 	   else { 
-		   swap (bilionario[i].nome,bilionario[j].nome);
-		   swap (bilionario[i].fortuna,bilionario[j].fortuna);
-		   swap	(bilionario[i].fonte,bilionario[j].fonte);
-		   swap (bilionario[i].pais,bilionario[j].pais);
-		   swap (bilionario[i].idade,bilionario[j].idade);
-		   swap (bilionario[i].sexo,bilionario[j].sexo);
+		   swap (bilionario[i],bilionario[j]);
 		   i++;
 		   j--;
 	   }
 	}                 
-	bilionario[c].nome = bilionario[j].nome;
-	bilionario[j].nome = pivo;
+	bilionario[c] = bilionario[j];
+	bilionario[j] = pivoPrincipal;
 	
 	return j;
 
@@ -90,8 +82,6 @@ void quickSortDecrescente (bilionarios *bilionario, int posPivo, int fim) {
 
 
 
-
-
 void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
     ofstream arquivo("saida.bin", ios::binary); 
 
@@ -103,20 +93,25 @@ void escritaArqBinario(bilionarios* &bilionario, int tamanho) {
 }
 
 
-/*
-void buscaDirecionada (bilionarios* bilionario, int tam, int inicio, int fim) {
-		
-	string aux;
-	ifstream arquivo ("saida.bin", ios::in);
-	arquivo.seek(inicio);
-	
-	while (arquivo.tellg	)
+
+void buscaDirecionada (bilionarios* bilionario, int i, int fim) {
+	i -= 1;
+	cout << endl << endl;
+	while (i < fim) 
 	{
-		_
+		cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+		<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+		<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+		<< "Pais de origem: " << bilionario[i].pais << endl
+		<< "Idade: " << bilionario[i].idade << endl
+		<< "Sexo: " << bilionario[i].sexo << endl;
+		cout << "=======================" << endl << endl;
+		i++;
 	}
 	
+	
 }
-*/
+
 
 
 
@@ -175,6 +170,70 @@ void escritaArqCsv(bilionarios* bilionario, int tamanho) {
 	
 
 }
+
+
+int buscaBinaria(bilionarios* bilionario, string procurado, int inicio, int fim) {
+	transform(procurado.begin(), procurado.end(), procurado.begin(), ::tolower);
+	if (inicio <= fim)
+	{
+		int meio = (inicio+fim)/2;
+		string aux = bilionario[meio].nome;
+		transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+		if (aux > procurado) 
+			return buscaBinaria(bilionario, procurado, inicio, meio-1);
+		
+		else if (aux < procurado) 
+			return buscaBinaria(bilionario, procurado, meio+1, fim);
+		
+		else 
+			return meio;
+	}
+	
+	else
+		return -1;
+}
+
+
+
+void exclusaoVetor (bilionarios* bilionario, int posicao, int numRegistros) {
+	
+	for (int i = posicao; i < numRegistros-1; i++)
+	{
+		bilionario[i].nome = bilionario[i+1].nome;
+		bilionario[i].fonte = bilionario[i+1].fonte;
+		bilionario[i].fortuna = bilionario[i+1].fortuna;
+		bilionario[i].pais = bilionario[i+1].pais;
+		bilionario[i].sexo = bilionario[i+1].sexo;
+		bilionario[i].idade = bilionario[i+1].idade;
+	}
+}
+
+
+
+void encontrarPosicao(bilionarios* bilionario, string nomeBuscado, int &numRegistros) {
+    bool encontrado = false;
+    string nomeBilionario;
+    transform(nomeBuscado.begin(), nomeBuscado.end(), nomeBuscado.begin(), ::tolower);
+    int i = 0;
+
+    while (i < numRegistros && !encontrado) {
+        nomeBilionario = bilionario[i].nome;
+        transform(nomeBilionario.begin(), nomeBilionario.end(), nomeBilionario.begin(), ::tolower);
+
+        if (nomeBilionario == nomeBuscado) {
+            encontrado = true;
+            exclusaoVetor(bilionario, i, numRegistros);
+            numRegistros--;
+            cout << endl << "Cadastro excluido com sucesso!" << endl << endl;
+        }
+        i++;
+    }
+
+    if (!encontrado) {
+        cout << endl << "Cadastro nao encontrado!" << endl << endl;
+    }
+}
+
 
 
 void insercaoVetor (bilionarios* &bilionario, int& numRegistros, ifstream& arquivo_csv) {
@@ -331,11 +390,11 @@ int main(){
 	bilionarios *bilionario = new bilionarios[numRegistros];
 	leituraArqCsv(arquivo_csv, bilionario, numRegistros);
 	escritaArqBinario(bilionario, numRegistros);
-	leituraArqBinario(bilionario, numRegistros);
+	
 	
 
-	int entrada, entrada1, num;
-	string nomeProcurado;
+	int entrada, entrada1, inicio, fim;
+	string nomeProcurado, nomeExclusao;
 	bool teste1 = true;
 	
 	
@@ -344,11 +403,13 @@ int main(){
 		"[1] - Fazer uma busca" << endl <<
 		"[2] - Inserir um novo elemento" << endl <<
 		"[3] - Ordenar o vetor em ordem alfabetica" << endl <<
-		"[4] - Fazer uma busca direcionada" << endl << 
+		"[4] - Fazer uma busca de uma linha a outra" << endl << 
+		"[5] - Excluir um cadastro" << endl <<
+		"[6] - Mostrar todos os cadastrados" << endl <<
 		"[-1] - Sair" << endl << endl;
 		cout << "Digite um valor: ";
 		cin >> entrada;
-		
+		cout << endl;
 		switch (entrada) {
 
 			case 1:
@@ -369,13 +430,12 @@ int main(){
 				cout << "[1] - Crescente";
 				cout << endl << "[2] - Decrescente" << endl << endl <<"Digite um valor: ";
 				cin >> entrada1;
-				
+				cout << endl << endl;
 				switch (entrada1) { 
 					case 1:
 						
 						particionamento(bilionario, 0, numRegistros-1);
-						num = particionamento(bilionario, 0, numRegistros-1);
-						quickSort(bilionario, num, numRegistros-1);
+						quickSort(bilionario, 0, numRegistros-1);
 						escritaArqBinario(bilionario, numRegistros);
 						leituraArqBinario(bilionario, numRegistros);
 						cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
@@ -389,24 +449,38 @@ int main(){
 						escritaArqBinario(bilionario, numRegistros);
 						leituraArqBinario(bilionario, numRegistros);
 						cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
-						
+					break;
 				}
 				
 				break;
 				
 			case 4:
-				cin >> nomeProcurado;
-				//buscaDirecionada(bilionario, numRegistros, nomeProcurado);
+				cout << "Digite as linhas que voce deseja buscar" << endl;
+				cout << "Linha inicial: "; cin >> inicio;
+				cout << "Linha final: "; cin >> fim;
+				buscaDirecionada(bilionario, inicio, fim);
 				break;
-				
-				
+			
+			case 5:
+				cout << "Digite o nome do bilionario que voce deseja excluir o cadastro: ";
+				cin.ignore();
+				getline(cin, nomeExclusao);
+				encontrarPosicao(bilionario,nomeExclusao,numRegistros);
+				escritaArqBinario(bilionario, numRegistros);
+				escritaArqCsv(bilionario,numRegistros);
+				break;
+			
 			case -1:
-				cout << endl << endl << "Programa finalizado. Volte sempre!" << endl;
+				cout << endl << "Programa finalizado. Volte sempre!" << endl;
 				teste1 = false;
 				break;
-				
+			
+			case 6:
+				leituraArqBinario(bilionario, numRegistros);
+				break;
 			default:
-				cout << endl << endl << "Opcao invalida" << endl << endl;
+				cout << endl << "Opcao invalida!" << endl << endl << endl;
+				break;
 		}
 	}
 	
