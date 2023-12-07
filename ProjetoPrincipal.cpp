@@ -294,7 +294,7 @@ void buscaVetor (bilionarios* bilionario, int numRegistros) {
 			getline(cin,nomeBuscado);
 			transform(nomeBuscado.begin(), nomeBuscado.end(), nomeBuscado.begin(), ::tolower);
 			
-			while (i < numRegistros or teste == true)
+			while (i < numRegistros and teste == true)
 			{
 				nomeBilionario = bilionario[i].nome;
 				transform(nomeBilionario.begin(), nomeBilionario.end(), nomeBilionario.begin(), ::tolower);
@@ -346,11 +346,19 @@ void buscaVetor (bilionarios* bilionario, int numRegistros) {
 					<< "Idade: " << bilionario[i].idade << " anos" << endl
 					<< "Sexo: " << bilionario[i].sexo << endl <<
 					"=======================" << endl;
+					
+					teste = false;
 				}
 				
 				i++;
 			}
-			cout << endl <<  "Esses sao os bilionario do sexo " << sexoBuscado << " que fazem parte do ranking!" << endl << endl << endl;
+			
+			if (teste == true)
+				cout << "As possibilidades sao: Masculino ou Feminino, tente novamente!" << endl << endl;
+			
+			else
+				cout << endl <<  "Esses sao os bilionario do sexo " << sexoBuscado << " que fazem parte do ranking!" << endl << endl;
+			
 			break;
 		
 		default:
@@ -405,7 +413,7 @@ int main(){
 		"[3] - Ordenar o vetor em ordem alfabetica" << endl <<
 		"[4] - Fazer uma busca de uma linha a outra" << endl << 
 		"[5] - Excluir um cadastro" << endl <<
-		"[6] - Mostrar todos os cadastrados" << endl <<
+		"[6] - Mostrar todos os cadastrados (ordem de riqueza crescente)" << endl <<
 		"[-1] - Sair" << endl << endl;
 		cout << "Digite um valor: ";
 		cin >> entrada;
@@ -436,8 +444,17 @@ int main(){
 						
 						particionamento(bilionario, 0, numRegistros-1);
 						quickSort(bilionario, 0, numRegistros-1);
-						escritaArqBinario(bilionario, numRegistros);
-						leituraArqBinario(bilionario, numRegistros);
+						for (int i = 0; i < numRegistros; i++)
+						{
+							cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+							<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+							<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+							<< "Pais de origem: " << bilionario[i].pais << endl
+							<< "Idade: " << bilionario[i].idade << endl
+							<< "Sexo: " << bilionario[i].sexo << endl;
+							cout << "=======================" << endl << endl;
+						}
+						
 						cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
 						
 					break;
@@ -446,8 +463,17 @@ int main(){
 						
 						particionamentoDecrescente(bilionario, 0, numRegistros-1);
 						quickSortDecrescente(bilionario, 0, numRegistros-1);
-						escritaArqBinario(bilionario, numRegistros);
-						leituraArqBinario(bilionario, numRegistros);
+						for (int i = 0; i < numRegistros; i++)
+						{
+							cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+							<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+							<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+							<< "Pais de origem: " << bilionario[i].pais << endl
+							<< "Idade: " << bilionario[i].idade << endl
+							<< "Sexo: " << bilionario[i].sexo << endl;
+							cout << "=======================" << endl << endl;
+						}
+						
 						cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
 					break;
 				}
@@ -471,15 +497,16 @@ int main(){
 				break;
 			
 			case -1:
-				cout << endl << "Programa finalizado. Volte sempre!" << endl;
+				cout  << "Programa finalizado. Volte sempre!";
 				teste1 = false;
 				break;
 			
 			case 6:
 				leituraArqBinario(bilionario, numRegistros);
+				
 				break;
 			default:
-				cout << endl << "Opcao invalida!" << endl << endl << endl;
+				cout << "Opcao invalida!" << endl << endl;
 				break;
 		}
 	}
