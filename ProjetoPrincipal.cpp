@@ -488,6 +488,7 @@ int main(){
 				break;
 			
 			case 5:
+				limparTela();
 				cout << "Digite o nome do bilionario que voce deseja excluir o cadastro: ";
 				cin.ignore();
 				getline(cin, nomeExclusao);
@@ -510,7 +511,7 @@ int main(){
 				break;
 		}
 	}
-	
+	delete[] bilionario;
 	} 
 	arquivo_csv.close();
 	
