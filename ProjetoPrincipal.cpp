@@ -70,6 +70,73 @@ void quickSort (bilionarios *bilionario, int posPivo, int fim) {
 }
 
 
+
+int particionamentoPais(bilionarios* bilionario, int c, int f) {
+
+	string pivo = bilionario[c].pais;
+	bilionarios pivoPrincipal = bilionario[c];
+	int i = c+1, j = f;
+	while (i <= j) {
+	   if (bilionario[i].pais <= pivo) i++;
+	   else if (pivo <= bilionario[j].pais) j--; 
+	   else { 
+		   swap (bilionario[i],bilionario[j]);
+		   i++;
+		   j--;
+	   }
+	}                 
+	bilionario[c] = bilionario[j];
+	bilionario[j] = pivoPrincipal;
+	
+	return j;
+
+}
+   
+
+void quickSortPais (bilionarios *bilionario, int posPivo, int fim) {
+
+   int posNovoPivo;         
+   if (posPivo < fim) {  
+      posNovoPivo = particionamentoPais(bilionario, posPivo, fim);
+      quickSortPais(bilionario, posPivo, posNovoPivo- 1); 
+      quickSortPais(bilionario, posNovoPivo + 1, fim); 
+   }
+}
+
+
+int particionamentoPaisDecrescente (bilionarios* bilionario, int c, int f) {
+
+	string pivo = bilionario[c].pais;
+	bilionarios pivoPrincipal = bilionario[c];
+	int i = c+1, j = f;
+	while (i <= j) {
+	   if (bilionario[i].pais >= pivo) i++;
+	   else if (pivo >= bilionario[j].pais) j--; 
+	   else { 
+		   swap (bilionario[i],bilionario[j]);
+		   i++;
+		   j--;
+	   }
+	}                 
+	bilionario[c] = bilionario[j];
+	bilionario[j] = pivoPrincipal;
+	
+	return j;
+
+}
+   
+
+void quickSortPaisDecrescente (bilionarios *bilionario, int posPivo, int fim) {
+
+   int posNovoPivo;         
+   if (posPivo < fim) {  
+      posNovoPivo = particionamentoPaisDecrescente(bilionario, posPivo, fim);
+      quickSortPaisDecrescente(bilionario, posPivo, posNovoPivo- 1); 
+      quickSortPaisDecrescente(bilionario, posNovoPivo + 1, fim); 
+   }
+}
+
+
 void quickSortDecrescente (bilionarios *bilionario, int posPivo, int fim) {
 
    int posNovoPivo;         
@@ -155,9 +222,44 @@ void leituraArqCsv(ifstream& arquivo_csv, bilionarios* bilionario, int numRegist
 
 
 
+void leituraArqCsv2(bilionarios* bilionario) {
+	char lixo;
+	string linha;
+	int numRegistros;
+	ifstream arquivo_csv ("Banco.csv");
+	getline(arquivo_csv, linha);
+	arquivo_csv >> numRegistros;
+	
+	for (int i = 0; i < numRegistros; i++){
+	arquivo_csv.ignore();
+	getline(arquivo_csv, bilionario[i].nome,',');
+	arquivo_csv >> bilionario[i].fortuna;
+	arquivo_csv >> lixo;
+	getline(arquivo_csv,bilionario[i].fonte,',');
+	getline(arquivo_csv,bilionario[i].pais,',');
+	arquivo_csv >> bilionario[i].idade;
+	arquivo_csv >> lixo;
+	arquivo_csv >> bilionario[i].sexo;
+	}
+	
+	for (int i = 0; i < numRegistros; i++)
+	{
+		cout << "Posicao #" << i+1 << " do ranking: " << bilionario[i].nome << endl
+		<< "Fortuna: " << bilionario[i].fortuna << " Bilhoes" << endl
+		<< "Fonte de sua fortuna: " << bilionario[i].fonte << endl
+		<< "Pais de origem: " << bilionario[i].pais << endl
+		<< "Idade: " << bilionario[i].idade << " anos" << endl
+		<< "Sexo: " << bilionario[i].sexo << endl;
+		cout << "=======================" << endl << endl;
+	}
+	
+}
+
+
+
 void escritaArqCsv(bilionarios* bilionario, int tamanho) {
 	ofstream arquivo("Banco.csv");
-	arquivo << "#nome,Fortuna em bilhões de dólares,Fonte da riqueza,País de origem,Idade" << endl;
+	arquivo << "#Nome,Fortuna em bilhões de dólares,Fonte da riqueza,País de origem,Idade" << endl;
 	arquivo << tamanho;
 	arquivo << endl;
 	for (int i = 0; i < tamanho; i++)
@@ -398,10 +500,8 @@ int main(){
 	bilionarios *bilionario = new bilionarios[numRegistros];
 	leituraArqCsv(arquivo_csv, bilionario, numRegistros);
 	escritaArqBinario(bilionario, numRegistros);
-	
-	
 
-	int entrada, entrada1, inicio, fim;
+	int entrada, entrada1, entrada2, entrada3, inicio, fim;
 	string nomeProcurado, nomeExclusao;
 	bool teste1 = true;
 	
@@ -434,52 +534,124 @@ int main(){
 			
 			case 3: 
 				limparTela();
-				cout << "Voce deseja ordenar por ordem crescente ou decrescente?" << endl;
-				cout << "[1] - Crescente";
-				cout << endl << "[2] - Decrescente" << endl << endl <<"Digite um valor: ";
-				cin >> entrada1;
+				cout << "Voce deseja ordenar o ranking pelos nomes pessoais ou pelos paises?" << endl;
+				cout << "[1] - Nomes";
+				cout << endl << "[2] - Paises" << endl << endl <<"Digite um valor: ";
+				cin >> entrada2;
 				cout << endl << endl;
-				switch (entrada1) { 
+				
+				switch (entrada2) {
+					
 					case 1:
-						
-						particionamento(bilionario, 0, numRegistros-1);
-						quickSort(bilionario, 0, numRegistros-1);
-						for (int i = 0; i < numRegistros; i++)
-						{
-							cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
-							<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
-							<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
-							<< "Pais de origem: " << bilionario[i].pais << endl
-							<< "Idade: " << bilionario[i].idade << endl
-							<< "Sexo: " << bilionario[i].sexo << endl;
-							cout << "=======================" << endl << endl;
+					limparTela();
+					cout << "Em ordem crescente ou decrescente?" << endl;
+					cout << "[1] - Crescente";
+					cout << endl << "[2] - Decrescente" << endl << endl <<"Digite um valor: ";
+					cin >> entrada1;
+					cout << endl << endl;
+				
+						switch (entrada1) { 
+							case 1:
+								
+								particionamento(bilionario, 0, numRegistros-1);
+								quickSort(bilionario, 0, numRegistros-1);
+								for (int i = 0; i < numRegistros; i++)
+								{
+									cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+									<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+									<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+									<< "Pais de origem: " << bilionario[i].pais << endl
+									<< "Idade: " << bilionario[i].idade << endl
+									<< "Sexo: " << bilionario[i].sexo << endl;
+									cout << "=======================" << endl << endl;
+								}
+								
+								cout << "Aqui esta seu ranking ordenado em ordem alfabetica crescente de nomes pessoais!" << endl << endl;
+								
+							break;
+							
+							case 2:
+								
+								particionamentoDecrescente(bilionario, 0, numRegistros-1);
+								quickSortDecrescente(bilionario, 0, numRegistros-1);
+								for (int i = 0; i < numRegistros; i++)
+								{
+									cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+									<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+									<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+									<< "Pais de origem: " << bilionario[i].pais << endl
+									<< "Idade: " << bilionario[i].idade << endl
+									<< "Sexo: " << bilionario[i].sexo << endl;
+									cout << "=======================" << endl << endl;
+								}
+								
+								cout << "Aqui esta seu ranking ordenado em ordem alfabetica decrescente de nomes pessoais!" << endl << endl;
+								
+							break;
 						}
 						
-						cout << "Aqui esta seu vetor ordenado em ordem alfabetica crescente!" << endl << endl;
+						default:
+							limparTela();
+							cout << "Opcao invalida!" << endl << endl;
+							break;
 						
 					break;
+				
 					
 					case 2:
+						limparTela();
+						cout << "Em ordem crescente ou decrescente?" << endl;
+						cout << "[1] - Crescente";
+						cout << endl << "[2] - Decrescente" << endl << endl <<"Digite um valor: ";
+						cin >> entrada3;
+						cout << endl << endl;
 						
-						particionamentoDecrescente(bilionario, 0, numRegistros-1);
-						quickSortDecrescente(bilionario, 0, numRegistros-1);
-						for (int i = 0; i < numRegistros; i++)
-						{
-							cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
-							<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
-							<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
-							<< "Pais de origem: " << bilionario[i].pais << endl
-							<< "Idade: " << bilionario[i].idade << endl
-							<< "Sexo: " << bilionario[i].sexo << endl;
-							cout << "=======================" << endl << endl;
-						}
-						
-						cout << "Aqui esta seu vetor ordenado em ordem alfabetica decrescente!" << endl << endl;
+						switch (entrada3) {
+										
+							case 1:
+								particionamentoPais(bilionario, 0, numRegistros-1);
+								quickSortPais(bilionario, 0, numRegistros-1);
+								for (int i = 0; i < numRegistros; i++)
+								{
+									cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+									<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+									<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+									<< "Pais de origem: " << bilionario[i].pais << endl
+									<< "Idade: " << bilionario[i].idade << endl
+									<< "Sexo: " << bilionario[i].sexo << endl;
+									cout << "=======================" << endl << endl;
+								}
+								
+								cout << "Aqui esta seu ranking ordenado em ordem alfabetica crescente de paises!" << endl << endl;
+							
+							break;
+							
+							case 2:
+								particionamentoPaisDecrescente(bilionario, 0, numRegistros-1);
+								quickSortPaisDecrescente(bilionario, 0, numRegistros-1);
+								for (int i = 0; i < numRegistros; i++)
+								{
+									cout << "Posicao #" << i+1 << ": " << bilionario[i].nome << endl
+									<< "Fortuna: " << bilionario[i].fortuna << " bilhoes" << endl
+									<< "Fonte da sua fortuna: " << bilionario[i].fonte << endl
+									<< "Pais de origem: " << bilionario[i].pais << endl
+									<< "Idade: " << bilionario[i].idade << endl
+									<< "Sexo: " << bilionario[i].sexo << endl;
+									cout << "=======================" << endl << endl;
+								}
+								
+								cout << "Aqui esta seu ranking ordenado em ordem alfabetica decrescente de paises!" << endl << endl;
+							break;
+							
+							default:
+							limparTela();
+							cout << "Opcao invalida!" << endl << endl;
+							break;
+						}			
 					break;
 				}
-				
-				break;
-				
+			break;
+			
 			case 4:
 				cout << "Digite as linhas que voce deseja buscar" << endl;
 				cout << "Linha inicial: "; cin >> inicio;
@@ -497,15 +669,17 @@ int main(){
 				escritaArqCsv(bilionario,numRegistros);
 				break;
 			
+			case 6:
+				limparTela();
+				leituraArqCsv2(bilionario);
+				
+				break;
+				
 			case -1:
 				cout  << "Programa finalizado. Volte sempre!";
 				teste1 = false;
 				break;
 			
-			case 6:
-				leituraArqBinario(bilionario, numRegistros);
-				
-				break;
 			default:
 				cout << "Opcao invalida!" << endl << endl;
 				break;
